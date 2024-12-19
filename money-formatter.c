@@ -31,7 +31,7 @@ unsigned int gtmoneystr(char* str, uint32_t value)
 	unsigned int strsize;
 	if (digitcount > 6)
 	{
-		strcpy(str, "ERROR");
+		strcpy(str, "TOOBIG!");
 		return 0;
 	}
 
