@@ -16,7 +16,7 @@ void dw2ctn(const int32_t input, uint8_t* output)
 	output[2] = (uint8_t)((truncated >> 16) & 0xff); // most significant byte
 }
 
-// Converts catenda to double word.
+// Converts catena to double word.
 int32_t ctn2dw(const uint8_t* input)
 {
 	int32_t result = (input[0] & 0xff) | ((input[1] & 0xff) << 8) | ((input[2] & 0xff) << 16);
