@@ -5,7 +5,7 @@
 
 #include <string.h>
 
-unsigned int gtdigitcount(uint32_t value)
+static unsigned int gtdigitcount(uint32_t value)
 {
 	unsigned int count = 0;
 	while (value > 0)
