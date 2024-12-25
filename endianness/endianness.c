@@ -13,17 +13,6 @@ void tobigend64(uint8_t* buffer, uint64_t n)
 	}
 }
 
-void tobigend32f(uint8_t* buffer, float f)
-{
-	uint32_t n = *((uint32_t*)&f);
-	for (int i = 0, k = sizeof(f) - 1; i < sizeof(f); ++i)
-	{
-		buffer[k] = (uint8_t)n;
-		n >>= 8;
-		--k;
-	}
-}
-
 void tobigend32(uint8_t* buffer, uint32_t n)
 {
 	for (unsigned int i = 0, k = sizeof(n) - 1; i < sizeof(n); ++i)
