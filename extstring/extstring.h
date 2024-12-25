@@ -70,6 +70,19 @@ inline static uint64_t swapbytesqw(uint64_t s)
 	return output;
 }
 
+inline static uint8_t popcount(uint64_t s)
+{
+	uint8_t c;
+
+	while (s != 0)
+	{
+		c += s & 1;
+		s >>= 1;
+	}
+
+	return c;
+}
+
 #ifdef __cplusplus
 }
 #endif
