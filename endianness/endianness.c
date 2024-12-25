@@ -52,7 +52,7 @@ void tobigend16(uint8_t* buffer, uint16_t n)
 {
 	for (unsigned int i = 0, k = sizeof(n) - 1; i < sizeof(n); ++i)
 	{
-		buffer[k] = (uint8_t);
+		buffer[k] = (uint8_t)n;
 		n >>= 8;
 		--k;
 	}
