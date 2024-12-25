@@ -10,7 +10,18 @@ extern "C" {
 
 // checks system endianness
 // true = little, false = big
-bool chkend();
+inline static bool chkend()
+{
+	union {
+		unsigned short int i;
+		char c[sizeof(unsigned short int)];
+	} u;
+
+	u.i = 1;
+
+	return u.c[0] == 1;
+}
+
 void tobigend64(uint8_t* buffer, uint64_t n);
 void tobigend32f(uint8_t* buffer, float f);
 void tobigend32(uint8_t* buffer, uint32_t n);

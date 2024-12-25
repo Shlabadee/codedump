@@ -3,20 +3,6 @@
 
 #include "endianness.h"
 
-// checks system endianness
-// true = little, false = big
-bool chkend()
-{
-	union {
-		unsigned short int i;
-		char c[sizeof(unsigned short int)];
-	} u;
-
-	u.i = 1;
-
-	return u.c[0] == 1;
-}
-
 void tobigend64(uint8_t* buffer, uint64_t n)
 {
 	for (unsigned int i = 0, k = sizeof(n) - 1; i < sizeof(n); ++i)
