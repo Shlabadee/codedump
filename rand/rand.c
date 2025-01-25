@@ -215,7 +215,6 @@ uint64_t get_rseed()
 	#else
 		#ifdef _WIN32
 
-			#include <wincrypt.h>
 			#include <windows.h>
 
 uint64_t get_rseed()
@@ -223,10 +222,22 @@ uint64_t get_rseed()
 	HCRYPTPROV hProvider = 0;
 	uint64_t seed = 1;
 
-	if (CryptAcquireContext(&hProvider, NULL, NULL, PROV_RSA_FULL, 0))
+	if (CryptAcquireContext(&hProvider, NULL, NULL, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT))
 	{
-		CryptGenRandom(hProvider, sizeof(seed), (BYTE*)&seed);
+		if (CryptGenRandom(hProvider, sizeof(seed), (BYTE*)&seed))
+		{
+			CryptReleaseContext(hProvider, 0);
+			return seed;
+		}
+		else
+		{
+			printf("CryptGenRandom failed. Error: %lu\n", GetLastError());
+		}
 		CryptReleaseContext(hProvider, 0);
+	}
+	else
+	{
+		printf("CryptAcquireContext failed. Error: %lu\n", GetLastError());
 	}
 
 	return seed;
