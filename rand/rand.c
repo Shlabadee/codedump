@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <math.h>
 #include <string.h>
 #include <time.h>
 
@@ -19,7 +20,7 @@
 #define MASK_EXPONENT_D                                                                        \
 	UINT64_C(0b0011111111110000000000000000000000000000000000000000000000000000)
 
-static uint64_t xstate[4];
+static uint64_t rstate[4];
 
 static inline uint64_t h_rol64(const uint64_t x, const uint64_t k)
 {
@@ -36,16 +37,16 @@ uint64_t rand64()
 	uint64_t result;
 	uint64_t t;
 
-	result = h_rol64(xstate[1] * 5, 7) * 9;
-	t = xstate[1] << 17;
+	result = h_rol64(rstate[1] * 5, 7) * 9;
+	t = rstate[1] << 17;
 
-	xstate[2] ^= xstate[0];
-	xstate[3] ^= xstate[1];
-	xstate[1] ^= xstate[2];
-	xstate[0] ^= xstate[3];
+	rstate[2] ^= rstate[0];
+	rstate[3] ^= rstate[1];
+	rstate[1] ^= rstate[2];
+	rstate[0] ^= rstate[3];
 
-	xstate[2] ^= t;
-	xstate[3] = h_rol64(xstate[3], 45);
+	rstate[2] ^= t;
+	rstate[3] = h_rol64(rstate[3], 45);
 
 	return result;
 }
@@ -88,10 +89,29 @@ uint16_t rand16()
 	return output;
 }
 
+uint8_t rand8()
+{
+	static uint64_t random_sample = 0;
+	static uint8_t sample_counter = 0;
+	uint8_t output;
+
+	if (sample_counter == 0)
+	{
+		random_sample = rand64();
+		sample_counter = 8;
+	}
+
+	output = (uint8_t)random_sample;
+	random_sample >>= 8;
+	--sample_counter;
+
+	return output;
+}
+
 float randf()
 {
 	float f;
-	uint32_t i = (rand32() & MASK_SIGNIFICAND_F) | MASK_EXPONENT_F;
+	const uint32_t i = (rand32() & MASK_SIGNIFICAND_F) | MASK_EXPONENT_F;
 	memcpy(&f, &i, sizeof(f)); // f = *((float*)&i);
 	return --f;
 }
@@ -99,7 +119,7 @@ float randf()
 double randd()
 {
 	double d;
-	uint64_t i = (rand64() & MASK_SIGNIFICAND_D) | MASK_EXPONENT_D;
+	const uint64_t i = (rand64() & MASK_SIGNIFICAND_D) | MASK_EXPONENT_D;
 	memcpy(&d, &i, sizeof(d));
 	return --d;
 }
@@ -129,6 +149,34 @@ int64_t rand64_range(const int64_t min, const int64_t max)
 	return (result % range) + min;
 }
 
+static inline float clamp(const float value, const float min, const float max)
+{
+	if (value < min)
+		return min;
+	else if (value > max)
+		return max;
+	return value;
+}
+
+float randfc(const float offset, const float scale)
+{
+	const float u1 = randf();
+	const float u2 = randf();
+	const float z = sqrtf(-2.0f * logf(u1)) * cosf(2.0f * M_PI * u2);
+	return clamp((z * scale) + offset, 0.0f, 1.0f);
+}
+
+float randfcr(const float min, const float max, const float scale)
+{
+	const float mean = 0.5f * (min + max);
+	const float stdev = (max - min) / scale;
+	const float u1 = randf(), u2 = randf();
+	const float r = sqrtf(-2.0f * logf(u1));
+	const float theta = 2.0f * M_PI * u2;
+	const float z = r * cosf(theta);
+	return mean + (z * stdev);
+}
+
 #ifdef BASICSEED
 
 uint64_t get_rseed()
@@ -153,16 +201,12 @@ uint64_t get_rseed()
 	dev_urandom = fopen("/dev/urandom", "rb");
 
 	if (dev_urandom == NULL)
-	{
 		return 1;
-	}
 
 	rb = fread(&seed, 1, sizeof(seed), dev_urandom);
 
 	if (rb != sizeof(seed))
-	{
 		seed = 2;
-	}
 
 	fclose(dev_urandom);
 	return seed;
@@ -202,8 +246,13 @@ static uint64_t h_splitmix64(const uint64_t x)
 
 void initrstate(const uint64_t rseed)
 {
-	xstate[0] = h_splitmix64(rseed);
-	xstate[1] = h_splitmix64(xstate[0]);
-	xstate[2] = h_splitmix64(xstate[1]);
-	xstate[3] = h_splitmix64(xstate[2]);
+	rstate[0] = h_splitmix64(rseed);
+	rstate[1] = h_splitmix64(rstate[0]);
+	rstate[2] = h_splitmix64(rstate[1]);
+	rstate[3] = h_splitmix64(rstate[2]);
+}
+
+void getrstate(uint64_t* yrstate)
+{
+	memcpy(yrstate, rstate, 4 * sizeof(*rstate));
 }
