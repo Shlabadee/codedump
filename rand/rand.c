@@ -267,3 +267,8 @@ void getrstate(uint64_t* yrstate)
 {
 	memcpy(yrstate, rstate, 4 * sizeof(*rstate));
 }
+
+void setrstate(uint64_t* yrstate)
+{
+	memcpy(rstate, yrstate, 4 * sizeof(*rstate));
+}

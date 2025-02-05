@@ -49,6 +49,10 @@ void initrstate(const uint64_t seed);
 ensure `yrstate` is an array with `4` elements
 */
 void getrstate(uint64_t* yrstate);
+/*
+ensure `yrstate` is an array with `4` elements
+*/
+void setrstate(uint64_t* yrstate);
 
 #ifdef __cplusplus
 }
