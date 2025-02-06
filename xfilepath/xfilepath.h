@@ -20,6 +20,11 @@ typedef struct XFilePath
 } XFilePath;
 
 XFilePath XFP_split(const char* path);
+/*
+Ensure `path` is an empty string that can contain all the strings in `xfp` plus a `/` and `.` if
+needed. You can use `XFP_size` to get the full necessary size.
+*/
+void XFP_join(const XFilePath* xfp, char* path);
 void XFP_free(XFilePath* xfp);
 /*
 Returns the total string size (which includes the `NULL`-terminator) of each path part.
