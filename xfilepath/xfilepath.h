@@ -10,6 +10,7 @@ extern "C" {
 #define XFPDIRECTORY 0b1
 #define XFPFILENAME 0b10
 #define XFPEXT 0b100
+#define XFPEVERYTHING (XFPDIRECTORY | XFPFILENAME | XFPEXT)
 
 typedef struct XFilePath
 {
