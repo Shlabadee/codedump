@@ -5,6 +5,12 @@
 extern "C" {
 #endif
 
+#include <stddef.h>
+
+#define XFPDIRECTORY 0b1
+#define XFPFILENAME 0b10
+#define XFPEXT 0b100
+
 typedef struct XFilePath
 {
 	char* directory;
@@ -14,6 +20,14 @@ typedef struct XFilePath
 
 XFilePath XFP_split(const char* path);
 void XFP_free(XFilePath* xfp);
+/*
+Returns the total string size (which includes the `NULL`-terminator) of each path part.
+
+`XFPDIRECTORY` = directory
+`XFPFILENAME` = filename
+`XFPEXT` = extension
+*/
+size_t XFP_size(XFilePath* xfp, unsigned short flags);
 /*
 Ensure `out_path` is at least the same size as `path` as this function does not allocate memory.
 */
