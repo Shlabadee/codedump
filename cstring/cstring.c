@@ -51,6 +51,54 @@ CString* cstrset(CString* cstr, const char* str)
 	return cstr;
 }
 
+CString* cstrappend(CString* dest, const char* cstr)
+{
+	size_t suffix_len = strlen(suffix);
+	size_t new_size = dest->size + suffix_len;
+
+	if (new_size + 1 > dest->capacity)
+	{
+		char* t_data = realloc(dest->data, new_size + 1);
+
+		if (t_data == NULL)
+			return NULL;
+
+		dest->data = t_data;
+		dest->capacity = new_size + 1;
+	}
+
+	memcpy(dest->data + dest->size, suffix, suffix_len + 1);
+	dest->size = new_size;
+	return dest;
+}
+
+CString* cstrinsert(CString* cstr, const char* str, size_t pos)
+{
+	size_t insert_len, new_size;
+
+	if (pos > dest->size)
+		return NULL;
+
+	insert_len = strlen(str);
+	new_size = dest->size + insert_len;
+
+	if (new_size + 1 > dest->capacity)
+	{
+		char* t_data = realloc(dest->data, new_size + 1);
+
+		if (t_data == NULL)
+			return NULL;
+
+		dest->data = t_data;
+		dest->capacity = new_size + 1;
+	}
+
+	memmove(dest->data + pos + insert_len, dest->data + pos, dest->size - pos + 1);
+	memcpy(dest->data + pos, str, insert_len);
+	dest->size = new_size;
+	return dest;
+}
+
 void cstrclear(CString* cstr)
 {
 	memset(cstr->data, 0, cstr->capacity);

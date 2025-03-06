@@ -18,6 +18,8 @@ typedef struct CString
 
 CString* cstrinit(const char* str);
 CString* cstrset(CString* cstr, const char* str);
+CString* cstrappend(CString* cstr, const char* str);
+CString* cstrinsert(CString* cstr, const char* str, size_t pos);
 void cstrclear(CString* cstr);
 int cstrshrink(CString* cstr);
 void cstrfree(CString* cstr);
