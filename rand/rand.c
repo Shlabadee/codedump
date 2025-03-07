@@ -141,9 +141,20 @@ int64_t rand64_range(const int64_t min, const int64_t max)
 	int64_t result;
 
 	do
-	{
 		result = (int64_t)rand64() & INT64_MAX;
-	}
+	while (result >= max_unbiased);
+
+	return (result % range) + min;
+}
+
+int8_t rand8_range(const int8_t min, const int8_t max)
+{
+	const uint8_t range = max - min + 1;
+	const uint8_t max_unbiased = INT8_MAX - (INT8_MAX % range);
+	int8_t result;
+
+	do
+		result = (int8_t)rand8() & INT8_MAX;
 	while (result >= max_unbiased);
 
 	return (result % range) + min;
@@ -230,9 +241,8 @@ uint64_t get_rseed()
 			return seed;
 		}
 		else
-		{
 			printf("CryptGenRandom failed. Error: %lu\n", GetLastError());
-		}
+
 		CryptReleaseContext(hProvider, 0);
 	}
 	else

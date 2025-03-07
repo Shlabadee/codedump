@@ -20,6 +20,7 @@ float randf_range(const float min, const float max);
 double randd();
 double randd_range(const double min, const double max);
 int64_t rand64_range(const int64_t min, const int64_t max);
+int8_t rand8_range(const int8_t min, const int8_t max);
 /*
 bell curve random number, between [0, 1]
 if `offset` == `0.5f`, set the scale to `RANDFC_DEFAULT_SCALE` to keep the RNG as centered as
