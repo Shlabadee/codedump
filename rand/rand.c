@@ -9,10 +9,8 @@
 
 #include "rand.h"
 
-// 0 00000000 11111111111111111111111
-#define MASK_SIGNIFICAND_F UINT32_C(0b00000000011111111111111111111111)
-// 0 01111111 00000000000000000000000
-#define MASK_EXPONENT_F UINT32_C(0b00111111100000000000000000000000)
+#define MASK_SIGNIFICAND_F UINT32_C((1 << 23) - 1)
+#define MASK_EXPONENT_F UINT32_C(127 << 23)
 // 0 00000000000 1111111111111111111111111111111111111111111111111111
 #define MASK_SIGNIFICAND_D                                                                     \
 	UINT64_C(0b0000000000001111111111111111111111111111111111111111111111111111)
@@ -160,7 +158,7 @@ int8_t rand8_range(const int8_t min, const int8_t max)
 	return (result % range) + min;
 }
 
-static inline float clamp(const float value, const float min, const float max)
+static inline float h_clamp(const float value, const float min, const float max)
 {
 	if (value < min)
 		return min;
@@ -174,7 +172,7 @@ float randfc(const float offset, const float scale)
 	const float u1 = randf();
 	const float u2 = randf();
 	const float z = sqrtf(-2.0f * logf(u1)) * cosf(2.0f * M_PI * u2);
-	return clamp((z * scale) + offset, 0.0f, 1.0f);
+	return h_clamp((z * scale) + offset, 0.0f, 1.0f);
 }
 
 float randfcr(const float min, const float max, const float scale)
