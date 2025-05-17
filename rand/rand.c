@@ -9,8 +9,8 @@
 
 #include "rand.h"
 
-#define MASK_SIGNIFICAND_F UINT32_C((1 << 23) - 1)
-#define MASK_EXPONENT_F UINT32_C(127 << 23)
+#define MASK_SIGNIFICAND_F ((1UL << 23) - 1UL)
+#define MASK_EXPONENT_F (127UL << 23)
 #define MASK_SIGNIFICAND_D ((1ULL << 52) - 1ULL)
 #define MASK_EXPONENT_D (1023ULL << 52)
 
