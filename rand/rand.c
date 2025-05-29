@@ -13,6 +13,7 @@
 #define MASK_EXPONENT_F (127UL << 23)
 #define MASK_SIGNIFICAND_D ((1ULL << 52) - 1ULL)
 #define MASK_EXPONENT_D (1023ULL << 52)
+#define L_PI 3.14159274101257324219f
 
 static uint64_t rstate[4];
 
@@ -128,30 +129,36 @@ double randd_range(const double min, const double max)
 	return (randd() * (max - min)) + min;
 }
 
-int64_t rand64_range(const int64_t min, const int64_t max)
+int64_t rand64_range(int64_t min, int64_t max)
 {
-	const uint64_t range = max - min + 1;
-	const uint64_t max_unbiased = INT64_MAX - (INT64_MAX % range);
-	int64_t result;
+	int64_t signed_range = max - min + 1;
+	uint64_t range = (uint64_t)signed_range;
+	uint64_t threshold = UINT64_MAX - (UINT64_MAX % range);
 
+	uint64_t rnd;
 	do
-		result = (int64_t)rand64() & INT64_MAX;
-	while (result >= max_unbiased);
+	{
+		rnd = rand64();
+	}
+	while (rnd >= threshold);
 
-	return (result % range) + min;
+	return (int64_t)(rnd % range) + min;
 }
 
-int8_t rand8_range(const int8_t min, const int8_t max)
+int8_t rand8_range(int8_t min, int8_t max)
 {
-	const uint8_t range = max - min + 1;
-	const uint8_t max_unbiased = INT8_MAX - (INT8_MAX % range);
-	int8_t result;
+	int16_t signed_range = (int16_t)max - (int16_t)min + 1;
+	uint8_t range = (uint8_t)signed_range;
+	uint8_t threshold = UINT8_MAX - (UINT8_MAX % range);
 
+	uint8_t rnd8;
 	do
-		result = (int8_t)rand8() & INT8_MAX;
-	while (result >= max_unbiased);
+	{
+		rnd8 = rand8();
+	}
+	while (rnd8 >= threshold);
 
-	return (result % range) + min;
+	return (int8_t)(rnd8 % range) + min;
 }
 
 static inline float h_clamp(const float value, const float min, const float max)
@@ -167,7 +174,7 @@ float randfc(const float offset, const float scale)
 {
 	const float u1 = randf();
 	const float u2 = randf();
-	const float z = sqrtf(-2.0f * logf(u1)) * cosf(2.0f * M_PI * u2);
+	const float z = sqrtf(-2.0f * logf(u1)) * cosf(2.0f * L_PI * u2);
 	return h_clamp((z * scale) + offset, 0.0f, 1.0f);
 }
 
@@ -177,7 +184,7 @@ float randfcr(const float min, const float max, const float scale)
 	const float stdev = (max - min) / scale;
 	const float u1 = randf(), u2 = randf();
 	const float r = sqrtf(-2.0f * logf(u1));
-	const float theta = 2.0f * M_PI * u2;
+	const float theta = 2.0f * L_PI * u2;
 	const float z = r * cosf(theta);
 	return mean + (z * stdev);
 }
