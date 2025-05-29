@@ -145,20 +145,19 @@ int64_t rand64_range(int64_t min, int64_t max)
 	return (int64_t)(rnd % range) + min;
 }
 
-int8_t rand8_range(int8_t min, int8_t max)
+int8_t rand8_range(const int8_t min, const int8_t max)
 {
-	int16_t signed_range = (int16_t)max - (int16_t)min + 1;
-	uint8_t range = (uint8_t)signed_range;
-	uint8_t threshold = UINT8_MAX - (UINT8_MAX % range);
+	int range = (int)max - (int)min + 1;
+	int threshold = INT8_MAX - (INT8_MAX % range);
+	int r;
 
-	uint8_t rnd8;
 	do
 	{
-		rnd8 = rand8();
+		r = rand8() & INT8_MAX;
 	}
-	while (rnd8 >= threshold);
+	while (r >= threshold);
 
-	return (int8_t)(rnd8 % range) + min;
+	return (int8_t)((r % range) + min);
 }
 
 static inline float h_clamp(const float value, const float min, const float max)
