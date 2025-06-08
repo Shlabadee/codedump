@@ -202,7 +202,7 @@ uint64_t get_rseed()
 	return timestamp ^ base_seed;
 }
 #else
-	#if defined __linux__ || defined __APPLE__ || __FreeBSD__
+	#if defined __linux__ || defined __APPLE__ || defined __FreeBSD__
 uint64_t get_rseed()
 {
 	uint64_t seed;
