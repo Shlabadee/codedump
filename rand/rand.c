@@ -9,10 +9,6 @@
 
 #include "rand.h"
 
-#define MASK_SIGNIFICAND_F ((1UL << 23) - 1UL)
-#define MASK_EXPONENT_F (127UL << 23)
-#define MASK_SIGNIFICAND_D ((1ULL << 52) - 1ULL)
-#define MASK_EXPONENT_D (1023ULL << 52)
 #define L_PI 3.14159274101257324219f
 
 static uint64_t rstate[4];
@@ -101,22 +97,6 @@ uint8_t rand8()
 	--sample_counter;
 
 	return output;
-}
-
-float randf()
-{
-	float f;
-	const uint32_t i = (rand32() & MASK_SIGNIFICAND_F) | MASK_EXPONENT_F;
-	memcpy(&f, &i, sizeof(f)); // f = *((float*)&i);
-	return --f;
-}
-
-double randd()
-{
-	double d;
-	const uint64_t i = (rand64() & MASK_SIGNIFICAND_D) | MASK_EXPONENT_D;
-	memcpy(&d, &i, sizeof(d));
-	return --d;
 }
 
 float randf_range(const float min, const float max)

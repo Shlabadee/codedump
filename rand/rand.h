@@ -1,5 +1,5 @@
-#ifndef SHLA_RAND_H
-#define SHLA_RAND_H
+#ifndef RAND_H
+#define RAND_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -11,12 +11,33 @@ extern "C" {
 #include <stdbool.h>
 #include <stdint.h>
 
+#include <string.h>
+
 uint64_t rand64();
 uint32_t rand32();
 uint16_t rand16();
 uint8_t rand8();
-float randf();
-float randf_range(const float min, const float max);
+
+static inline float randf()
+{
+	constexpr uint32_t MASK_SIGNIFICAND_F = ((1UL << 23) - 1UL);
+	const uint32_t MASK_EXPONENT_F = (127UL << 23);
+	float f;
+	const uint32_t i = (rand32() & MASK_SIGNIFICAND_F) | MASK_EXPONENT_F;
+	memcpy(&f, &i, sizeof(f)); // f = *((float*)&i);
+	return --f;
+}
+
+static inline double randd()
+{
+	const uint64_t MASK_SIGNIFICAND_D = ((1ULL << 52) - 1ULL);
+	const uint64_t MASK_EXPONENT_D = (1023ULL << 52);
+	double d;
+	const uint64_t i = (rand64() & MASK_SIGNIFICAND_D) | MASK_EXPONENT_D;
+	memcpy(&d, &i, sizeof(d));
+	return --d;
+}
+
 double randd();
 double randd_range(const double min, const double max);
 int64_t rand64_range(const int64_t min, const int64_t max);
