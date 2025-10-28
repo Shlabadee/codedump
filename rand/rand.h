@@ -20,7 +20,7 @@ uint8_t rand8();
 
 static inline float randf()
 {
-	constexpr uint32_t MASK_SIGNIFICAND_F = ((1UL << 23) - 1UL);
+	const uint32_t MASK_SIGNIFICAND_F = ((1UL << 23) - 1UL);
 	const uint32_t MASK_EXPONENT_F = (127UL << 23);
 	float f;
 	const uint32_t i = (rand32() & MASK_SIGNIFICAND_F) | MASK_EXPONENT_F;
