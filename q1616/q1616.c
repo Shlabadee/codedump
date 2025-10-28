@@ -16,31 +16,58 @@ static int64_t h_saturate(int64_t n)
 	return n;
 }
 
-q1616 q1616_add(q1616 a, q1616 b)
+Q1616 Q1616_add(Q1616 a, Q1616 b)
 {
+	Q1616 q;
 	int64_t tmp;
-	tmp = (int64_t)a + (int64_t)b;
+	tmp = (int64_t)a.raw + (int64_t)b.raw;
 	tmp = h_saturate(tmp);
-
-	return (q1616)tmp;
+	q.raw = (int32_t)tmp;
+	return q;
 }
 
-q1616 q1616_subtract(q1616 a, q1616 b)
+Q1616 Q1616_subtract(Q1616 a, Q1616 b)
 {
+	Q1616 q;
 	int64_t tmp;
-	tmp = (int64_t)a - (int64_t)b;
-	return (q1616)tmp;
+	tmp = (int64_t)a.raw - (int64_t)b.raw;
+	q.raw = (int32_t)tmp;
+	return q;
 }
 
-q1616 q1616_multiply(q1616 a, q1616 b)
+Q1616 Q1616_multiply(Q1616 a, Q1616 b)
 {
-	int64_t tmp = (int64_t)a * (int64_t)b;
-	tmp >>= Q;
-	return (q1616)h_saturate(tmp);
+	Q1616 q;
+	int64_t tmp;
+	tmp = (int64_t)a.raw * (int64_t)b.raw;
+	tmp = h_saturate(tmp);
+	q.raw = (int32_t)tmp;
+	return q;
 }
 
-q1616 q1616_divide(q1616 a, q1616 b)
+Q1616 Q1616_divide(Q1616 a, Q1616 b)
 {
-	int64_t tmp = ((int64_t)a << Q) / b;
-	return (q1616)h_saturate(tmp);
+	Q1616 q;
+	int64_t tmp;
+	tmp = ((int64_t)a.raw << Q) / b.raw;
+	tmp = h_saturate(tmp);
+	q.raw = (int32_t)tmp;
+	return q;
+}
+
+Q1616 Q1616_from_float(float f)
+{
+	Q1616 q;
+	q.integer = (int16_t)f;
+	f -= (float)q.integer;
+	q.fraction = (uint16_t)(f * 65536.f);
+	return q;
+}
+
+float Q1616_to_float(Q1616 q)
+{
+	float f;
+	f = (float)q.integer;
+	f += (float)q.fraction / 65536.f;
+	return f;
 }

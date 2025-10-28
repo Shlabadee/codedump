@@ -7,12 +7,21 @@ extern "C" {
 
 #include <stdint.h>
 
-typedef int32_t q1616;
+typedef union Q1616 {
+	int32_t raw;
+	struct
+	{
+		int16_t integer;
+		uint16_t fraction;
+	};
+} Q1616;
 
-q1616 q1616_add(q1616 a, q1616 b);
-q1616 q1616_subtract(q1616 a, q1616 b);
-q1616 q1616_multiply(q1616 a, q1616 b);
-q1616 q1616_divide(q1616 a, q1616 b);
+Q1616 Q1616_add(Q1616 a, Q1616 b);
+Q1616 Q1616_subtract(Q1616 a, Q1616 b);
+Q1616 Q1616_multiply(Q1616 a, Q1616 b);
+Q1616 Q1616_divide(Q1616 a, Q1616 b);
+Q1616 Q1616_from_float(float f);
+float Q1616_to_float(Q1616 q);
 
 #ifdef __cplusplus
 }
