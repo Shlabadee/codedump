@@ -38,7 +38,7 @@ static inline double randd()
 	return --d;
 }
 
-double randd();
+float randf_range(const float min, const float max);
 double randd_range(const double min, const double max);
 int64_t rand64_range(const int64_t min, const int64_t max);
 int8_t rand8_range(const int8_t min, const int8_t max);
