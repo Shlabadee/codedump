@@ -99,19 +99,9 @@ uint8_t rand8()
 	return output;
 }
 
-float randf_range(const float min, const float max)
-{
-	return (randf() * (max - min)) + min;
-}
-
-double randd_range(const double min, const double max)
-{
-	return (randd() * (max - min)) + min;
-}
-
 int64_t rand64_range(int64_t min, int64_t max)
 {
-	int64_t signed_range = max - min + 1;
+	int64_t signed_range = (max - min) + 1;
 	uint64_t range = (uint64_t)signed_range;
 	uint64_t threshold = UINT64_MAX - (UINT64_MAX % range);
 
@@ -125,9 +115,9 @@ int64_t rand64_range(int64_t min, int64_t max)
 	return (int64_t)(rnd % range) + min;
 }
 
-int8_t rand8_range(const int8_t min, const int8_t max)
+int8_t rand8_range(int8_t min, int8_t max)
 {
-	int range = (int)max - (int)min + 1;
+	int range = ((int)max - (int)min) + 1;
 	int threshold = INT8_MAX - (INT8_MAX % range);
 	int r;
 
@@ -140,7 +130,7 @@ int8_t rand8_range(const int8_t min, const int8_t max)
 	return (int8_t)((r % range) + min);
 }
 
-static inline float h_clamp(const float value, const float min, const float max)
+static inline float h_clamp(float value, float min, float max)
 {
 	if (value < min)
 		return min;
@@ -149,22 +139,22 @@ static inline float h_clamp(const float value, const float min, const float max)
 	return value;
 }
 
-float randfc(const float offset, const float scale)
+float randfc(float offset, float scale)
 {
-	const float u1 = randf();
-	const float u2 = randf();
-	const float z = sqrtf(-2.0f * logf(u1)) * cosf(2.0f * L_PI * u2);
+	float u1 = randf();
+	float u2 = randf();
+	float z = sqrtf(-2.0f * logf(u1)) * cosf(2.0f * L_PI * u2);
 	return h_clamp((z * scale) + offset, 0.0f, 1.0f);
 }
 
-float randfcr(const float min, const float max, const float scale)
+float randfcr(float min, float max, float scale)
 {
-	const float mean = 0.5f * (min + max);
-	const float stdev = (max - min) / scale;
-	const float u1 = randf(), u2 = randf();
-	const float r = sqrtf(-2.0f * logf(u1));
-	const float theta = 2.0f * L_PI * u2;
-	const float z = r * cosf(theta);
+	float mean = 0.5f * (min + max);
+	float stdev = (max - min) / scale;
+	float u1 = randf(), u2 = randf();
+	float r = sqrtf(-2.0f * logf(u1));
+	float theta = 2.0f * L_PI * u2;
+	float z = r * cosf(theta);
 	return mean + (z * stdev);
 }
 
@@ -237,7 +227,7 @@ uint64_t get_rseed()
 	#endif
 #endif
 
-static uint64_t h_splitmix64(const uint64_t x)
+static uint64_t h_splitmix64(uint64_t x)
 {
 	uint64_t z = (x + 0x9e3779b97f4a7c15ULL);
 	z = (z ^ (z >> 30)) * 0xbf58476d1ce4e5b9ULL;
@@ -245,7 +235,7 @@ static uint64_t h_splitmix64(const uint64_t x)
 	return z ^ (z >> 31);
 }
 
-void initrstate(const uint64_t rseed)
+void initrstate(uint64_t rseed)
 {
 	rstate[0] = h_splitmix64(rseed);
 	rstate[1] = h_splitmix64(rstate[0]);
@@ -258,7 +248,7 @@ void getrstate(uint64_t* yrstate)
 	memcpy(yrstate, rstate, 4 * sizeof(*rstate));
 }
 
-void setrstate(uint64_t* yrstate)
+void setrstate(const uint64_t* yrstate)
 {
 	memcpy(rstate, yrstate, 4 * sizeof(*rstate));
 }

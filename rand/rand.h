@@ -23,7 +23,7 @@ static inline float randf()
 	const uint32_t MASK_SIGNIFICAND_F = ((1UL << 23) - 1UL);
 	const uint32_t MASK_EXPONENT_F = (127UL << 23);
 	float f;
-	const uint32_t i = (rand32() & MASK_SIGNIFICAND_F) | MASK_EXPONENT_F;
+	uint32_t i = (rand32() & MASK_SIGNIFICAND_F) | MASK_EXPONENT_F;
 	memcpy(&f, &i, sizeof(f)); // f = *((float*)&i);
 	return --f;
 }
@@ -33,40 +33,48 @@ static inline double randd()
 	const uint64_t MASK_SIGNIFICAND_D = ((1ULL << 52) - 1ULL);
 	const uint64_t MASK_EXPONENT_D = (1023ULL << 52);
 	double d;
-	const uint64_t i = (rand64() & MASK_SIGNIFICAND_D) | MASK_EXPONENT_D;
+	uint64_t i = (rand64() & MASK_SIGNIFICAND_D) | MASK_EXPONENT_D;
 	memcpy(&d, &i, sizeof(d));
 	return --d;
 }
 
-float randf_range(const float min, const float max);
-double randd_range(const double min, const double max);
-int64_t rand64_range(const int64_t min, const int64_t max);
-int8_t rand8_range(const int8_t min, const int8_t max);
+static inline float randf_range(float min, float max)
+{
+	return (randf() * (max - min)) + min;
+}
+
+static inline double randd_range(double min, double max)
+{
+	return (randd() * (max - min)) + min;
+}
+
+int64_t rand64_range(int64_t min, int64_t max);
+int8_t rand8_range(int8_t min, int8_t max);
 /*
 bell curve random number, between [0, 1]
 if `offset` == `0.5f`, set the scale to `RANDFC_DEFAULT_SCALE` to keep the RNG as centered as
 possible (97.5%)
 */
-float randfc(const float offset, const float scale);
+float randfc(float offset, float scale);
 /*
 bell curve RNG between `min` and `max`
 a smaller `scale` results in a wider curve and value range
 a larger `scale` results in the opposite
 use `RANDFCR_DEFAULT_SCALE` for default value
 */
-float randfcr(const float min, const float max, const float scale);
+float randfcr(float min, float max, float scale);
 /*
 biased boolean RNG
 if `bias` == `0.5f`, no bias
 if `bias` > `0.5f`, bias towards `true`
 if `bias` < `0.5f`, bias towards `false`
 */
-static inline bool randb(const float bias)
+static inline bool randb(float bias)
 {
 	return randf() < bias;
 }
 uint64_t get_rseed();
-void initrstate(const uint64_t seed);
+void initrstate(uint64_t seed);
 /*
 ensure `yrstate` is an array with `4` elements
 */
@@ -74,7 +82,7 @@ void getrstate(uint64_t* yrstate);
 /*
 ensure `yrstate` is an array with `4` elements
 */
-void setrstate(uint64_t* yrstate);
+void setrstate(const uint64_t* yrstate);
 
 #ifdef __cplusplus
 }
