@@ -1,5 +1,5 @@
-#ifndef SHLA_RAND_H
-#define SHLA_RAND_H
+#ifndef RANDX_H
+#define RANDX_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -11,6 +11,8 @@ extern "C" {
 #include <stdbool.h>
 #include <stdint.h>
 
+#include <string.h>
+
 typedef struct RXstate
 {
 	uint64_t state[4];
@@ -20,10 +22,37 @@ uint64_t randx64(RXstate* state);
 uint32_t randx32(RXstate* state);
 uint16_t randx16(RXstate* state);
 uint8_t randx8(RXstate* state);
-float randxf(RXstate* state);
-float randxf_range(RXstate* state, const float min, const float max);
-double randxd(RXstate* state);
-double randxd_range(RXstate* state, const double min, const double max);
+
+static inline float randxf(RXstate* state)
+{
+	const uint32_t MASK_SIGNIFICAND_F = ((1UL << 23) - 1UL);
+	const uint32_t MASK_EXPONENT_F = (127UL << 23);
+	float f;
+	const uint32_t i = (randx32(state) & MASK_SIGNIFICAND_F) | MASK_EXPONENT_F;
+	memcpy(&f, &i, sizeof(f)); // f = *((float*)&i);
+	return --f;
+}
+
+static inline double randxd(RXstate* state)
+{
+	const uint64_t MASK_SIGNIFICAND_D = ((1ULL << 52) - 1ULL);
+	const uint64_t MASK_EXPONENT_D = (1023ULL << 52);
+	double d;
+	const uint64_t i = (randx64(state) & MASK_SIGNIFICAND_D) | MASK_EXPONENT_D;
+	memcpy(&d, &i, sizeof(d));
+	return --d;
+}
+
+static inline float randxf_range(RXstate* state, const float min, const float max)
+{
+	return (randxf(state) * (max - min)) + min;
+}
+
+static inline double randxd_range(RXstate* state, const double min, const double max)
+{
+	return (randxd(state) * (max - min)) + min;
+}
+
 int64_t randx64_range(RXstate* state, const int64_t min, const int64_t max);
 int8_t randx8_range(RXstate* state, const int8_t min, const int8_t max);
 /*

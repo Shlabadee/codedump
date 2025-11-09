@@ -9,10 +9,6 @@
 
 #include "randx.h"
 
-#define MASK_SIGNIFICAND_F ((1UL << 23) - 1UL)
-#define MASK_EXPONENT_F (127UL << 23)
-#define MASK_SIGNIFICAND_D ((1ULL << 52) - 1ULL)
-#define MASK_EXPONENT_D (1023ULL << 52)
 #define L_PI 3.14159274101257324219f
 
 static inline uint64_t h_rol64(const uint64_t x, const uint64_t k)
@@ -99,32 +95,6 @@ uint8_t randx8(RXstate* state)
 	--sample_counter;
 
 	return output;
-}
-
-float randxf(RXstate* state)
-{
-	float f;
-	const uint32_t i = (randx32(state) & MASK_SIGNIFICAND_F) | MASK_EXPONENT_F;
-	memcpy(&f, &i, sizeof(f)); // f = *((float*)&i);
-	return --f;
-}
-
-double randxd(RXstate* state)
-{
-	double d;
-	const uint64_t i = (randx64(state) & MASK_SIGNIFICAND_D) | MASK_EXPONENT_D;
-	memcpy(&d, &i, sizeof(d));
-	return --d;
-}
-
-float randxf_range(RXstate* state, const float min, const float max)
-{
-	return (randxf(state) * (max - min)) + min;
-}
-
-double randxd_range(RXstate* state, const double min, const double max)
-{
-	return (randxd(state) * (max - min)) + min;
 }
 
 int64_t randx64_range(RXstate* state, int64_t min, int64_t max)
