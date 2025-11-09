@@ -5,7 +5,6 @@
 
 #include <math.h>
 #include <string.h>
-#include <time.h>
 
 #include "randx.h"
 
@@ -158,7 +157,9 @@ float randxfcr(RXstate* state, const float min, const float max, const float sca
 
 #ifdef BASICSEED
 
-uint64_t get_rxseed()
+	#include <time.h>
+
+uint64_t get_rxseed(void)
 {
 	const uint64_t base_seed = 0xfdedceb10fd672d1;
 	uint64_t timestamp = time(0);
@@ -171,7 +172,7 @@ uint64_t get_rxseed()
 }
 #else
 	#if defined __linux__ || defined __APPLE__ || defined __FreeBSD__
-uint64_t get_rxseed()
+uint64_t get_rxseed(void)
 {
 	uint64_t seed;
 	size_t rb;
@@ -196,7 +197,7 @@ uint64_t get_rxseed()
 
 			#include <windows.h>
 
-uint64_t get_rxseed()
+uint64_t get_rxseed(void)
 {
 	HCRYPTPROV hProvider = 0;
 	uint64_t seed = 1;

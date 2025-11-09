@@ -78,7 +78,7 @@ static inline bool randxb(RXstate* state, const float bias)
 {
 	return randxf(state) < bias;
 }
-uint64_t get_rxseed();
+uint64_t get_rxseed(void);
 void initrxstate(RXstate* state, const uint64_t seed);
 
 #ifdef __cplusplus
