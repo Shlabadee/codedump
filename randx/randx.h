@@ -5,8 +5,8 @@
 extern "C" {
 #endif
 
-#define RANDFC_DEFAULT_SCALE 0.166666671633720397949f
-#define RANDFCR_DEFAULT_SCALE 6.0f
+#define RANDXFC_DEFAULT_SCALE 0.166666671633720397949f
+#define RANDXFCR_DEFAULT_SCALE 6.f
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -57,7 +57,7 @@ int64_t randx64_range(RXstate* state, const int64_t min, const int64_t max);
 int8_t randx8_range(RXstate* state, const int8_t min, const int8_t max);
 /*
 bell curve random number, between [0, 1]
-if `offset` == `0.5f`, set the scale to `RANDFC_DEFAULT_SCALE` to keep the RNG as centered as
+if `offset` == `0.5f`, set the scale to `RANDXFC_DEFAULT_SCALE` to keep the RNG as centered as
 possible (97.5%)
 */
 float randxfc(RXstate* state, const float offset, const float scale);
@@ -65,7 +65,7 @@ float randxfc(RXstate* state, const float offset, const float scale);
 bell curve RNG between `min` and `max`
 a smaller `scale` results in a wider curve and value range
 a larger `scale` results in the opposite
-use `RANDFCR_DEFAULT_SCALE` for default value
+use `RANDXFCR_DEFAULT_SCALE` for default value
 */
 float randxfcr(RXstate* state, const float min, const float max, const float scale);
 /*
